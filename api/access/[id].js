@@ -1,50 +1,54 @@
-const html = `
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI-Фитнес Тренер</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      width: 100%;
-    }
+export default function handler(req, res) {
+  const { id } = req.query;
 
-    .wrapper {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-    }
+  if (!id) {
+    return res.status(400).send("Invalid token");
+  }
 
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+  // --- token 1 hour ---
+  const creationTime = parseInt(id.substring(0, 10));
+  const now = Math.floor(Date.now() / 1000);
 
-    @media (max-width: 600px) {
-      iframe {
+  if (now - creationTime > 3600) {
+    return res.status(403).send("Время ссылки истекло. Запросите новый доступ.");
+  }
+
+  const html = `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI-Фитнес Тренер</title>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
         height: 100vh;
+        overflow: hidden;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="wrapper">
-    <iframe
-      src="https://www.chatbase.co/chatbot-iframe/rXmZj9IYIFf4XPe7c_w-I"
-      allowfullscreen
-    ></iframe>
-  </div>
-</body>
-</html>
-`;
-res.status(200).setHeader("Content-Type", "text/html; charset=utf-8").send(html);
 
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <iframe 
+      src="https://www.chatbase.co/chatbot-iframe/rXmZj9IYIFf4XPe7c_w-I"
+      allowfullscreen>
+    </iframe>
+  </body>
+  </html>
+  `;
+
+  res.status(200)
+    .setHeader("Content-Type", "text/html; charset=utf-8")
+    .send(html);
+}
