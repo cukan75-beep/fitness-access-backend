@@ -9,7 +9,8 @@ export default function handler(req, res) {
   const creationTime = parseInt(id.substring(0, 10));
   const now = Math.floor(Date.now() / 1000);
 
-  if (now - creationTime > 3600) {
+  if (Math.abs(now - creationTime) > 3600)
+
     return res.status(403).send("Время ссылки истекло. Запросите новый доступ.");
   }
 
