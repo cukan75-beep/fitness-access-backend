@@ -1,27 +1,15 @@
-import fs from "fs";
-import path from "path";
+export default async function handler(req, res) {
+  const token = req.query.token;
 
-export default function handler(req, res) {
-  const { token } = req.query;
+  // Здесь можно сделать проверку токена в базе, если нужно
+  // Пока просто считаем токен одноразовым без хранения
 
-  const filePath = path.join(process.cwd(), "tokens.json");
-
-  if (!fs.existsSync(filePath)) {
-    return res.status(400).send("Ссылка недействительна.");
-  }
-
-  const tokens = JSON.parse(fs.readFileSync(filePath, "utf8"));
-
-  if (!tokens[token]) {
-    return res.status(400).send("Ссылка недействительна или устарела.");
-  }
-
-  if (tokens[token].used) {
-    return res.status(400).send("Ссылка уже была использована.");
-  }
-
-  tokens[token].used = true;
-  fs.writeFileSync(filePath, JSON.stringify(tokens), "utf8");
-
-  return res.redirect("https://cukan75-beep.github.io/fitness-site/chat.html");
+  return res.status(200).send(`
+    <html>
+      <body>
+        <h1>Ваш одноразовый доступ подтвержден</h1>
+        <p>Токен: ${token}</p>
+      </body>
+    </html>
+  `);
 }
