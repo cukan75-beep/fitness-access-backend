@@ -46,4 +46,5 @@ const html = `
 </body>
 </html>
 `;
+res.status(200).setHeader("Content-Type", "text/html; charset=utf-8").send(html);
 
